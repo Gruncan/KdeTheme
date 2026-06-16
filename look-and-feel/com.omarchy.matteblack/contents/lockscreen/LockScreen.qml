@@ -63,21 +63,23 @@ Rectangle {
         onTriggered: timeDisplay.text = Qt.formatTime(new Date(), "HH:mm")
     }
 
-    // Centre: password field only — user is already logged in
+    // Centre: password field — shifted down 1.5× field height from centre
     Column {
-        anchors.centerIn: parent
+        anchors.horizontalCenter:       parent.horizontalCenter
+        anchors.verticalCenter:         parent.verticalCenter
+        anchors.verticalCenterOffset:   66
         spacing: 14
 
         Rectangle {
             width:  280
             height: 44
-            color:  "transparent"
+            color:  Qt.rgba(0.54, 0.54, 0.54, 0.22)
             border.color: root.failed
                 ? root.clrError
                 : passwordField.activeFocus
                     ? root.clrAccent
                     : Qt.rgba(0.74, 0.74, 0.74, 0.18)
-            border.width: 1
+            border.width: (passwordField.activeFocus || root.failed) ? 2 : 1
 
             Row {
                 anchors.left:           parent.left

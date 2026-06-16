@@ -33,19 +33,27 @@ cp "$SCRIPT_DIR/color-scheme/MatteBlack.colors" "$HOME/.local/share/color-scheme
 echo "  Apply in: System Settings → Appearance → Colors → Matte Black"
 
 # --- KDE look-and-feel (KScreenLocker) ---
+# Note: In Kubuntu 24.04 (Plasma 5.27) System Settings only exposes wallpaper
+# selection for the lock screen — NOT a theme picker. We set the theme directly
+# in kscreenlockerrc instead.
 echo "  Installing look-and-feel package..."
 mkdir -p "$HOME/.local/share/plasma/look-and-feel"
 cp -r "$SCRIPT_DIR/look-and-feel/com.omarchy.matteblack" "$HOME/.local/share/plasma/look-and-feel/"
 
 # Copy wallpaper into look-and-feel images dir
 if [ -f "$WALLPAPER" ]; then
+    mkdir -p "$HOME/.local/share/plasma/look-and-feel/com.omarchy.matteblack/contents/images"
     cp "$WALLPAPER" "$HOME/.local/share/plasma/look-and-feel/com.omarchy.matteblack/contents/images/"
 else
     echo "  WARNING: Copy 2-dot-hands.jpg to:"
     echo "           ~/.local/share/plasma/look-and-feel/com.omarchy.matteblack/contents/images/"
 fi
-echo "  Apply in: System Settings → Workspace Behavior → Screen Locking → Appearance → Matte Black"
+
+# Set kscreenlocker theme via config (not exposed in System Settings UI on Plasma 5.27)
+kwriteconfig5 --file kscreenlockerrc --group Greeter --key Theme com.omarchy.matteblack
+echo "  KScreenLocker theme set to com.omarchy.matteblack (via kscreenlockerrc)."
 
 echo ""
 echo "Done. Log out and back in to see the SDDM theme."
-echo "Apply the colour scheme and lock screen theme in System Settings."
+echo "Apply the colour scheme in: System Settings → Appearance → Colors → Matte Black"
+echo "The lock screen theme is already wired up via kscreenlockerrc — no System Settings step needed."

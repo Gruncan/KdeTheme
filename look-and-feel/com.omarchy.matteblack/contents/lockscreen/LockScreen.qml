@@ -1,8 +1,8 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 
-Item {
+Rectangle {
     id: root
+    color: "#121212"
 
     readonly property color clrFg:     "#bebebe"
     readonly property color clrAccent: "#e68e0d"
@@ -21,8 +21,10 @@ Item {
         function onSucceeded() {
             root.failed = false
         }
-        function onErrorMessage(msg) {
+        function onErrorMessage() {
             root.failed = true
+            passwordField.text = ""
+            passwordField.forceActiveFocus()
         }
     }
 
@@ -39,7 +41,7 @@ Item {
         color:        Qt.rgba(0.071, 0.071, 0.071, 0.65)
     }
 
-    // Time display — top right
+    // Time — top right, dim, same position as SDDM
     Text {
         id: timeDisplay
         anchors.top:         parent.top
@@ -60,7 +62,7 @@ Item {
         onTriggered: timeDisplay.text = Qt.formatTime(new Date(), "HH:mm")
     }
 
-    // Centre: password field
+    // Centre: password field only — user is already logged in
     Column {
         anchors.centerIn: parent
         spacing: 14
@@ -124,6 +126,18 @@ Item {
                     root.failed = false
                 }
             }
+        }
+
+        // Subtle error hint — only visible on failure
+        Text {
+            visible:             root.failed
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:                "incorrect password"
+            color:               root.clrError
+            font.family:         "JetBrains Mono"
+            font.pixelSize:      11
+            font.letterSpacing:  1
+            opacity:             0.8
         }
     }
 

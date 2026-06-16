@@ -1,0 +1,9 @@
+[SddmGreeterTheme]
+Name=Matte Black
+Description=Minimal matte-black login theme
+Author=Duncan Jones
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf

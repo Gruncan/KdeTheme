@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Matte Black
 Comment=Omarchy matte-black look and feel
+Type=Service
+X-KDE-ServiceTypes=Plasma/LookAndFeel
 X-KDE-PluginInfo-Author=Duncan Jones
 X-KDE-PluginInfo-Email=
 X-KDE-PluginInfo-Name=com.omarchy.matteblack

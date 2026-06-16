@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.VirtualKeyboard 2.1
 
 Rectangle {
     id: root
@@ -139,6 +140,16 @@ Rectangle {
             font.letterSpacing:  1
             opacity:             0.8
         }
+    }
+
+    // Virtual keyboard — anchored to bottom, only visible when active (touch/accessibility).
+    // Without this, Qt floats it in a broken position.
+    InputPanel {
+        id: inputPanel
+        anchors.left:   parent.left
+        anchors.right:  parent.right
+        anchors.bottom: parent.bottom
+        visible:        active
     }
 
     Component.onCompleted: passwordField.forceActiveFocus()

@@ -11,28 +11,7 @@ Rectangle {
     readonly property color clrError:  "#D35F5F"
 
     property bool   failed:    false
-    property string loginName: ""
-
-    function resolveLoginName() {
-        try {
-            var xhr = new XMLHttpRequest()
-            xhr.open("GET", "file:///proc/self/status", false)
-            xhr.send()
-            var m = xhr.responseText.match(/^Uid:\s+(\d+)/m)
-            if (!m) return
-            var uid = m[1]
-            xhr.open("GET", "file:///etc/passwd", false)
-            xhr.send()
-            var lines = xhr.responseText.split("\n")
-            for (var i = 0; i < lines.length; i++) {
-                var p = lines[i].split(":")
-                if (p.length >= 3 && p[2] === uid) {
-                    root.loginName = p[0]
-                    return
-                }
-            }
-        } catch(e) {}
-    }
+    property string loginName: "jones_du"
 
     Connections {
         target: authenticator
@@ -64,7 +43,7 @@ Rectangle {
         color:        Qt.rgba(0.071, 0.071, 0.071, 0.65)
     }
 
-    // Time — top right, dim, same position as SDDM
+    // Time — top right, dim
     Text {
         id: timeDisplay
         anchors.top:         parent.top
@@ -85,22 +64,19 @@ Rectangle {
         onTriggered: timeDisplay.text = Qt.formatTime(new Date(), "HH:mm")
     }
 
-    // Centre: username label + password field
     Column {
         anchors.horizontalCenter:     parent.horizontalCenter
         anchors.verticalCenter:       parent.verticalCenter
         anchors.verticalCenterOffset: 66
         spacing: 10
 
-        // System login name resolved from /proc/self/status + /etc/passwd
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text:    root.loginName
-            visible: root.loginName !== ""
-            color:               root.clrDim
-            font.family:         "JetBrains Mono"
-            font.pixelSize:      13
-            font.letterSpacing:  2
+            text:                     root.loginName
+            color:                    root.clrDim
+            font.family:              "JetBrains Mono"
+            font.pixelSize:           13
+            font.letterSpacing:       2
         }
 
         // Password field
@@ -115,7 +91,6 @@ Rectangle {
                     : Qt.rgba(0.74, 0.74, 0.74, 0.18)
             border.width: (passwordField.activeFocus || root.failed) ? 2 : 1
 
-            // Placeholder — shown when field is empty
             Text {
                 anchors.left:           parent.left
                 anchors.leftMargin:     16
@@ -128,7 +103,6 @@ Rectangle {
                 font.letterSpacing:     1
             }
 
-            // Bullet dots
             Row {
                 anchors.left:           parent.left
                 anchors.leftMargin:     16
@@ -179,7 +153,6 @@ Rectangle {
             }
         }
 
-        // Error hint — only visible on failure
         Text {
             visible:                  root.failed
             anchors.horizontalCenter: parent.horizontalCenter
@@ -192,8 +165,6 @@ Rectangle {
         }
     }
 
-    // Virtual keyboard — anchored to bottom, only visible when active (touch/accessibility).
-    // Without this, Qt floats it in a broken position.
     InputPanel {
         id: inputPanel
         anchors.left:   parent.left
@@ -202,8 +173,5 @@ Rectangle {
         visible:        active
     }
 
-    Component.onCompleted: {
-        resolveLoginName()
-        passwordField.forceActiveFocus()
-    }
+    Component.onCompleted: passwordField.forceActiveFocus()
 }

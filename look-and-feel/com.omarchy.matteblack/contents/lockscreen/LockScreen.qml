@@ -63,17 +63,31 @@ Rectangle {
         onTriggered: timeDisplay.text = Qt.formatTime(new Date(), "HH:mm")
     }
 
-    // Centre: password field — shifted down 1.5× field height from centre
+    // Centre: username label + password field
     Column {
-        anchors.horizontalCenter:       parent.horizontalCenter
-        anchors.verticalCenter:         parent.verticalCenter
-        anchors.verticalCenterOffset:   66
-        spacing: 14
+        anchors.horizontalCenter:     parent.horizontalCenter
+        anchors.verticalCenter:       parent.verticalCenter
+        anchors.verticalCenterOffset: 66
+        spacing: 10
 
+        // Logged-in username — kscreenlocker injects this as a context property
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: typeof kscreenlocker_userName !== "undefined"
+                ? kscreenlocker_userName
+                : ""
+            visible: text !== ""
+            color:               root.clrDim
+            font.family:         "JetBrains Mono"
+            font.pixelSize:      13
+            font.letterSpacing:  2
+        }
+
+        // Password field
         Rectangle {
             width:  280
             height: 44
-            color:  Qt.rgba(0.54, 0.54, 0.54, 0.22)
+            color:  Qt.rgba(0.65, 0.65, 0.65, 0.28)
             border.color: root.failed
                 ? root.clrError
                 : passwordField.activeFocus
@@ -81,6 +95,20 @@ Rectangle {
                     : Qt.rgba(0.74, 0.74, 0.74, 0.18)
             border.width: (passwordField.activeFocus || root.failed) ? 2 : 1
 
+            // Placeholder — shown when field is empty
+            Text {
+                anchors.left:           parent.left
+                anchors.leftMargin:     16
+                anchors.verticalCenter: parent.verticalCenter
+                visible:                passwordField.text.length === 0
+                text:                   "password"
+                color:                  Qt.rgba(0.74, 0.74, 0.74, 0.45)
+                font.family:            "JetBrains Mono"
+                font.pixelSize:         14
+                font.letterSpacing:     1
+            }
+
+            // Bullet dots
             Row {
                 anchors.left:           parent.left
                 anchors.leftMargin:     16
@@ -131,16 +159,16 @@ Rectangle {
             }
         }
 
-        // Subtle error hint — only visible on failure
+        // Error hint — only visible on failure
         Text {
-            visible:             root.failed
+            visible:                  root.failed
             anchors.horizontalCenter: parent.horizontalCenter
-            text:                "incorrect password"
-            color:               root.clrError
-            font.family:         "JetBrains Mono"
-            font.pixelSize:      11
-            font.letterSpacing:  1
-            opacity:             0.8
+            text:                     "incorrect password"
+            color:                    root.clrError
+            font.family:              "JetBrains Mono"
+            font.pixelSize:           11
+            font.letterSpacing:       1
+            opacity:                  0.8
         }
     }
 

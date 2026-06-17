@@ -10,7 +10,29 @@ Rectangle {
     readonly property color clrDim:    "#8a8a8d"
     readonly property color clrError:  "#D35F5F"
 
-    property bool failed: false
+    property bool   failed:    false
+    property string loginName: ""
+
+    function resolveLoginName() {
+        try {
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET", "file:///proc/self/status", false)
+            xhr.send()
+            var m = xhr.responseText.match(/^Uid:\s+(\d+)/m)
+            if (!m) return
+            var uid = m[1]
+            xhr.open("GET", "file:///etc/passwd", false)
+            xhr.send()
+            var lines = xhr.responseText.split("\n")
+            for (var i = 0; i < lines.length; i++) {
+                var p = lines[i].split(":")
+                if (p.length >= 3 && p[2] === uid) {
+                    root.loginName = p[0]
+                    return
+                }
+            }
+        } catch(e) {}
+    }
 
     Connections {
         target: authenticator
@@ -70,13 +92,11 @@ Rectangle {
         anchors.verticalCenterOffset: 66
         spacing: 10
 
-        // Logged-in username — kscreenlocker injects this as a context property
+        // System login name resolved from /proc/self/status + /etc/passwd
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: typeof kscreenlocker_userName !== "undefined"
-                ? kscreenlocker_userName
-                : ""
-            visible: text !== ""
+            text:    root.loginName
+            visible: root.loginName !== ""
             color:               root.clrDim
             font.family:         "JetBrains Mono"
             font.pixelSize:      13
@@ -182,5 +202,8 @@ Rectangle {
         visible:        active
     }
 
-    Component.onCompleted: passwordField.forceActiveFocus()
+    Component.onCompleted: {
+        resolveLoginName()
+        passwordField.forceActiveFocus()
+    }
 }

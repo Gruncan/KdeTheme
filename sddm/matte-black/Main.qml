@@ -219,19 +219,23 @@ Rectangle {
         }
     }
 
-    // Session selector — bottom left
-    Row {
+    // Session selector — bottom left, fixed width so arrows never move
+    Item {
         anchors.left:         parent.left
         anchors.bottom:       parent.bottom
         anchors.leftMargin:   52
         anchors.bottomMargin: 44
-        spacing: 10
+        width:  280
+        height: 20
 
         Text {
-            text:  "‹"
-            color: prevArea.containsMouse ? root.clrFg : root.clrDim
-            font.family:    "JetBrains Mono"
-            font.pixelSize: 13
+            id:                     prevBtn
+            anchors.left:           parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            text:                   "‹"
+            color:                  prevArea.containsMouse ? root.clrFg : root.clrDim
+            font.family:            "JetBrains Mono"
+            font.pixelSize:         13
 
             MouseArea {
                 id:           prevArea
@@ -246,18 +250,26 @@ Rectangle {
         }
 
         Text {
-            text:               root.currentSessionName
-            color:              root.clrDim
-            font.family:        "JetBrains Mono"
-            font.pixelSize:     13
-            font.letterSpacing: 1
+            anchors.left:            prevBtn.right
+            anchors.right:           nextBtn.left
+            anchors.verticalCenter:  parent.verticalCenter
+            horizontalAlignment:     Text.AlignHCenter
+            text:                    root.currentSessionName
+            color:                   root.clrDim
+            font.family:             "JetBrains Mono"
+            font.pixelSize:          13
+            font.letterSpacing:      1
+            elide:                   Text.ElideRight
         }
 
         Text {
-            text:  "›"
-            color: nextArea.containsMouse ? root.clrFg : root.clrDim
-            font.family:    "JetBrains Mono"
-            font.pixelSize: 13
+            id:                     nextBtn
+            anchors.right:          parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            text:                   "›"
+            color:                  nextArea.containsMouse ? root.clrFg : root.clrDim
+            font.family:            "JetBrains Mono"
+            font.pixelSize:         13
 
             MouseArea {
                 id:           nextArea

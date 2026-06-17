@@ -206,7 +206,6 @@ Rectangle {
         anchors.leftMargin:   52
         anchors.bottomMargin: 44
         spacing: 10
-        verticalItemAlignment: Row.AlignVCenter
 
         Text {
             text:  "‹"

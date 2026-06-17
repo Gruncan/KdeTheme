@@ -12,9 +12,15 @@ Rectangle {
     readonly property color clrDim:    "#8a8a8d"
     readonly property color clrError:  "#D35F5F"
 
-    property bool   loginFailed:  false
-    property int    sessionIndex: sessionModel.lastIndex
-    property string currentUser:  userModel.lastUser
+    property bool   loginFailed:         false
+    property int    sessionIndex:        Math.max(0, sessionModel.lastIndex)
+    property string currentUser:         userModel.lastUser
+    property var    sessionNames:        []
+    property string currentSessionName:  ""
+
+    onSessionIndexChanged: {
+        currentSessionName = sessionNames[sessionIndex] || ""
+    }
 
     Connections {
         target: sddm
@@ -199,6 +205,20 @@ Rectangle {
         }
     }
 
+    // Hidden repeater — reads session names via delegate scope where SDDM roles resolve
+    Repeater {
+        model:    sessionModel
+        delegate: Item {
+            visible: false
+            Component.onCompleted: {
+                root.sessionNames.push(name)
+                root.currentSessionName = root.sessionNames[root.sessionIndex]
+                    || root.sessionNames[0]
+                    || ""
+            }
+        }
+    }
+
     // Session selector — bottom left
     Row {
         anchors.left:         parent.left
@@ -218,14 +238,15 @@ Rectangle {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
-                    var count = sessionModel.rowCount()
-                    root.sessionIndex = (root.sessionIndex - 1 + count) % count
+                    var count = root.sessionNames.length
+                    if (count > 0)
+                        root.sessionIndex = (root.sessionIndex - 1 + count) % count
                 }
             }
         }
 
         Text {
-            text:               sessionModel.data(sessionModel.index(root.sessionIndex, 0), Qt.DisplayRole) || ""
+            text:               root.currentSessionName
             color:              root.clrDim
             font.family:        "JetBrains Mono"
             font.pixelSize:     13
@@ -243,7 +264,9 @@ Rectangle {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
-                    root.sessionIndex = (root.sessionIndex + 1) % sessionModel.rowCount()
+                    var count = root.sessionNames.length
+                    if (count > 0)
+                        root.sessionIndex = (root.sessionIndex + 1) % count
                 }
             }
         }
